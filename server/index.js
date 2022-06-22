@@ -7,10 +7,12 @@ app.use(cors());
 
 const db = require('./models');
 
-const userRouter = require('./routes/users');
+const categoryRouter = require('./routes/categories');
 const productRouter = require('./routes/products');
-app.use('/users', userRouter);
+const userRouter = require('./routes/users');
+app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
+app.use('/users', userRouter);
 
 db.sequelize.sync().then(() => {
   app.listen(5000, () => {
