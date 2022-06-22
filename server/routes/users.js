@@ -40,6 +40,18 @@ router.post('/login', async (req, res) => {
   });
 });
 
+router.delete("/:id", validateToken, async (req, res) => {
+  const id = req.params.id;
+
+  await users.destroy({
+    where: {
+      id: id,
+    },
+  });
+
+  res.json("Data produk terhapus");
+});
+
 router.get('/auth', validateToken, (req, res) => {
   res.json(req.user);
 });
