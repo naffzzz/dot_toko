@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {users} = require('../models');
 const bcrypt = require('bcrypt');
+const {validateToken} = require('../middlewares/LoginMiddleware');
 
 const {sign} = require('jsonwebtoken');
 
@@ -10,7 +11,7 @@ router.get('/', async (req, res) => {
   res.json(user);
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', validateToken, async (req, res) => {
   const { username, password, role } = req.body;
   bcrypt.hash(password, 10).then((hash)=>{
     users.create({
@@ -24,20 +25,23 @@ router.post('/add', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const {username, password} = req.body;
-  const user = await users.findOne({ where: {username:username} });
+  const user = await users.findOne({ where: { username: username } });
 
-  if (!user) {
-    res.json({error: "User tidak ditemukan"});
-  }else {
-    bcrypt.compare(password, user.password).then((match) => {
-      if (!match) res.json({error: "username atau password salah"});
+  if (!user) res.json({ error: "Akun Tidak diketemukan" });
 
-      const accessToken = sign({username: user.username, id: user.id},
-        "importancesecret"
-      );
-      res.json({'accessToken':accessToken, 'role':user.role});
-    });
-  }
-})
+  bcrypt.compare(password, user.password).then(async (match) => {
+    if (!match) res.json({ error: "Username atau password salah" });
+
+    const accessToken = sign(
+      { username: user.username, id: user.id },
+      "importancesecret"
+    );
+    res.json({"accessToken": accessToken, "role": user.role, "username": user.username, "id": user.id});
+  });
+});
+
+router.get('/auth', validateToken, (req, res) => {
+  res.json(req.user);
+});
 
 module.exports = router;

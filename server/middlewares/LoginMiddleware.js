@@ -1,19 +1,18 @@
-const {verify} = require("jsonwebtoken");
+const { verify } = require("jsonwebtoken");
 
 const validateToken = (req, res, next) => {
   const accessToken = req.header("accessToken");
 
-  if (!accessToken) {
-    return res.json({error: "Pengguna belum masuk"});
-  }
-  try{
+  if (!accessToken) return res.json({ error: "Akun tidak masuk!" });
+
+  try {
     const validToken = verify(accessToken, "importancesecret");
-    const user = validToken;
-    if(validToken){
+    req.user = validToken;
+    if (validToken) {
       return next();
     }
-  }catch (err){
-    return res.json({error:err});
+  } catch (err) {
+    return res.json({ error: err });
   }
 };
 

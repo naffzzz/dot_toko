@@ -16,7 +16,7 @@ router.get('/show/:id', async (req, res) => {
 
 router.post('/', validateToken, async (req, res) => {
   const post = req.body;
-  await Categories.create(post);
+  await categories.create(post);
   res.json()
 });
 
