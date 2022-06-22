@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {users} = require('../models');
+const {admin_users} = require('../models');
+const {waiter_users} = require('../models');
 const bcrypt = require('bcrypt');
 const {validateToken} = require('../middlewares/LoginMiddleware');
 
@@ -13,13 +15,36 @@ router.get('/', async (req, res) => {
 
 router.post('/add', validateToken, async (req, res) => {
   const { username, password, role } = req.body;
-  bcrypt.hash(password, 10).then((hash)=>{
+  const id = bcrypt.hash(password, 10).then((hash)=>{
     users.create({
       username: username,
       password: hash,
       role: role
-    })
-    res.json("berhasil menambah user");
+    }).then(result => {
+      if (role == 1) {
+        admin_users.create({
+          user_id: result.id,
+          nik: 0,
+          name: username,
+          address: "Kosong",
+          gender: 1,
+          phone_number: 0
+        });
+        res.json("berhasil menambah owner");
+      } else {
+        waiter_users.create({
+          user_id: result.id,
+          nik: 0,
+          name: username,
+          address: "Kosong",
+          gender: 1,
+          phone_number: 0,
+          description: "Pegawai Baru"
+        });
+        res.json("berhasil menambah pegawai");
+      }
+    });
+
   });
 });
 
