@@ -52,17 +52,24 @@ router.post('/login', async (req, res) => {
   const {username, password} = req.body;
   const user = await users.findOne({ where: { username: username } });
 
-  if (!user) res.json({ error: "Akun Tidak diketemukan" });
+  if (!user) {res.json({ error: "Akun Tidak diketemukan" });}
+  else {
+    bcrypt.compare(password, user.password).then(async (match) => {
+      if (!match) {res.json({ error: "Username atau password salah" });}
 
-  bcrypt.compare(password, user.password).then(async (match) => {
-    if (!match) res.json({ error: "Username atau password salah" });
+      const accessToken = sign(
+        { username: user.username, id: user.id },
+        "importancesecret"
+      );
+      res.json({"accessToken": accessToken, "role": user.role, "username": user.username, "id": user.id});
+    });
+  }
+});
 
-    const accessToken = sign(
-      { username: user.username, id: user.id },
-      "importancesecret"
-    );
-    res.json({"accessToken": accessToken, "role": user.role, "username": user.username, "id": user.id});
-  });
+router.get('/show/:id', async (req, res) => {
+  const id = req.params.id;
+  const Users = await users.findByPk(id);
+  res.json(Users);
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
