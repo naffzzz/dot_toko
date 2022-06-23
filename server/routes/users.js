@@ -72,6 +72,20 @@ router.get('/show/:id', async (req, res) => {
   res.json(Users);
 });
 
+router.put("/update", validateToken, async (req, res) => {
+  const { username, password, role, id } = req.body;
+  // await users.update({ username: username, password: password }, { where: { id: id } });
+  await bcrypt.hash(password, 10).then((hash)=>{
+    users.update(
+      {
+        username: username,
+        password: hash,
+        role: role
+      } , { where: {id: id}})
+  });
+  res.json("berhasil memperbarui");
+});
+
 router.delete("/:id", validateToken, async (req, res) => {
   const id = req.params.id;
 

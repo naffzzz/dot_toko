@@ -20,6 +20,14 @@ router.post('/', validateToken, async (req, res) => {
   res.json()
 });
 
+router.put("/update", validateToken, async (req, res) => {
+  const { name, id } = req.body;
+  await categories.update({
+    name: name
+  }, { where: { id: id } });
+  res.json("berhasil memperbarui");
+});
+
 router.delete("/:id", validateToken, async (req, res) => {
   const id = req.params.id;
 
