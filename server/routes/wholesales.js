@@ -1,39 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const {admin_users} = require('../models');
+const {wholesales} = require('../models');
 const {validateToken} = require('../middlewares/LoginMiddleware');
 
 router.get('/', async (req, res) => {
-  const lists = await admin_users.findAll({
-    where:{
-      role: 1
-    }
-  });
+  const lists = await wholesales.findAll();
   res.json(lists);
 });
 
 router.get('/show/:id', async (req, res) => {
   const id = req.params.id;
-  const admin_user = await admin_users.findByPk(id);
-  res.json(admin_user);
+  const Wholesales = await wholesales.findByPk(id);
+  res.json(Wholesales);
 });
 
 router.post('/', validateToken, async (req, res) => {
   const post = req.body;
-  await admin_users.create(post);
-  res.json()
+  await wholesales.create(post);
+  res.json("berhasil menambah kulakan");
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
   const id = req.params.id;
 
-  await admin_users.destroy({
+  await wholesales.destroy({
     where: {
       id: id,
     },
   });
 
-  res.json("Data admin terhapus");
+  res.json("Data kulakan terhapus");
 });
 
 module.exports = router;
