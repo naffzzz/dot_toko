@@ -7,3 +7,8 @@ E2E test yang digunakan menggunakan insomnia<br>
 Aplikasi yang dibuat merupakan aplikasi manajemen toko dengan 2 level user, yaitu admin dan waiter.<br>
 Cara instalasi:<br>
 -import sql ke dalam db dengan nama dot_toko
+
+username:
+nafazulfa
+password:
+password
